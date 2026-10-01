@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "leadfinder"
+version = "0.1.0"
+description = "Zero-cost lead discovery: resolve a company, find a decision-maker, with evidence for every claim"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "John Wohlin", email = "jwohlin2@gmail.com" }]
+license = { text = "Proprietary" }
+keywords = ["lead-generation", "web-research", "llm", "sales", "osint"]
+classifiers = [
+    "Private :: Do Not Upload",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet :: WWW/HTTP :: Indexing/Search",
+]
+dependencies = [
+    "pydantic>=2.7",
+    "httpx[http2]>=0.27",
+    "beautifulsoup4>=4.12",
+    "lxml>=5.0",
+    "trafilatura>=1.9",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+playwright = ["playwright>=1.44"]
+dev = ["pytest>=8.0", "pytest-asyncio>=0.23"]
+
+[project.scripts]
+leadfinder = "leadfinder.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["leadfinder*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

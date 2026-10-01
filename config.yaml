@@ -1,0 +1,69 @@
+# leadfinder configuration.
+# Every value here can be overridden by an environment variable using the
+# convention  LEADFINDER_<SECTION>_<KEY>  (see .env.example).
+
+qwen:
+  # Any OpenAI-compatible /chat/completions endpoint works: vLLM, llama.cpp
+  # server, LM Studio, Ollama (/v1), TGI, OpenRouter, ...
+  # Leave empty to run the deterministic-only pipeline (no LLM reasoning).
+  base_url: ""            # env: LEADFINDER_QWEN_BASE_URL
+  model: ""               # env: LEADFINDER_QWEN_MODEL
+  api_key: ""             # env: LEADFINDER_QWEN_API_KEY
+  # openai_compatible | ollama | llamacpp
+  provider: "openai_compatible"   # env: LEADFINDER_QWEN_PROVIDER
+  timeout: 120
+  max_tokens: 2048
+  temperature: 0.1
+  # Bound each prompt so a slow remote box cannot stall a whole batch.
+  max_retries: 2
+  # Hard guard on context: evidence is truncated to this many characters.
+  max_evidence_chars: 24000
+
+research:
+  max_search_queries: 20
+  max_pages: 30
+  max_llm_rounds: 4
+  workers: 4
+  # Stop as soon as we have identity + decision maker + contact path.
+  # Do not burn budget just because it is available.
+  early_stop: true
+  company_confidence_target: 0.7
+  person_confidence_target: 0.6
+  # Hard wall-clock ceiling for one company, seconds.
+  company_timeout: 420
+
+crawler:
+  timeout: 20
+  max_redirects: 5
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+  respect_robots: false
+  playwright_fallback: true
+  playwright_min_chars: 600
+
+search:
+  provider: "brave"     # searxng | duckduckgo | bing | brave | auto
+  base_url: "http://localhost:8888"   # env: LEADFINDER_SEARCH_BASE_URL
+  # SearXNG serves JSON only when "json" is in its search.formats.
+  format: "json"                      # env: LEADFINDER_SEARCH_FORMAT
+  # Brave Search API is the primary provider (free tier, env:
+  # LEADFINDER_BRAVE_API_KEY). DuckDuckGo/Bing HTML scrapes are the $0
+  # fallback and SearXNG engines below apply only when searching via SearXNG.
+  fallback_providers: ["duckduckgo", "bing"]
+  max_queries_per_run: 400
+  timeout: 20
+  max_results: 12
+  # Results below this are never fetched.
+  fetch_top_n: 6
+  # Upstream engines to pin when searching via SearXNG. env:
+  # LEADFINDER_SEARCH_ENGINES
+  engines: ["bing", "mwmbl", "yep"]
+
+storage:
+  database: "data/output/leadfinder.db"
+  cache_ttl_hours: 336     # 14 days
+
+output:
+  directory: "data/output"
+  write_html_report: true
+  write_json: true
+  write_csv: true

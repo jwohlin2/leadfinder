@@ -1,0 +1,49 @@
+use_default_settings: true
+
+# SearXNG's own defaults leave a much larger engine set enabled than this
+# instance can actually reach. Disabling the unreachable ones is what makes the
+# JSON API usable; every other key is inherited from the defaults.
+general:
+  instance_name: "leadfinder"
+  debug: false
+  donation_url: false
+  contact_url: false
+  enable_metrics: false
+
+server:
+  secret_key: "change-me-leadfinder-local"
+  limiter: false
+  public_instance: false
+  image_proxy: false
+  default_http_headers:
+    User-Agent: leadfinder/0.1 (research harness)
+    Accept-Language: en-US,en;q=0.9,ja;q=0.8,zh-CN;q=0.8,de;q=0.7,it;q=0.7,es;q=0.7,fr;q=0.7,pt;q=0.7
+
+search:
+  safe_search: 0
+  autocomplete: ""
+  # The JSON API is what leadfinder consumes; upstream defaults to html only.
+  formats:
+    - html
+    - json
+  # The per-engine set is NOT configured here. When use_default_settings is on,
+  # SearXNG merges a user "engines" list positionally against the defaults, so
+  # hand-editing enabled/disabled produces a different set than intended.
+  # leadfinder instead passes ?engines=... per request (see search.engines in
+  # config.yaml), which is explicit and testable.
+
+  # Recover from a 429 quickly rather than sitting out an hour per engine.
+  ban_time_on_fail: 3
+  max_ban_time_on_fail: 15
+  suspended_times:
+    SearxEngineTooManyRequests: 20
+    SearxEngineCaptcha: 120
+    SearxEngineAccessDenied: 120
+
+outgoing:
+  request_timeout: 12.0
+  max_request_timeout: 20.0
+  pool_connections: 100
+  pool_maxsize: 100
+  retries: 1
+  max_redirects: 5
