@@ -166,13 +166,20 @@ def _compare_with_baseline(results: list[LeadResult], inputs: list) -> dict[str,
     The benchmark file ships with an 'Apollo said' and a 'People found' column.
     They are kept verbatim and reported alongside, which is what makes this a
     benchmark rather than just a run.
+
+    The counts are kept like-for-like: 'with_people' compares companies where
+    each side found at least one person, and 'people' compares total people -
+    not decision makers, which is a stricter subset on this side only.
     """
     by_domain = {item.domain.lower(): item for item in inputs}
     counts = {
-        "apollo_resolved": 0,
+        "apollo_completed": 0,
+        "apollo_with_people": 0,
         "apollo_people": 0,
-        "leadfinder_resolved": 0,
+        "leadfinder_leads": 0,
+        "leadfinder_with_people": 0,
         "leadfinder_people": 0,
+        "leadfinder_decision_makers": 0,
         "both": 0,
         "leadfinder_only": 0,
         "apollo_only": 0,
@@ -191,12 +198,16 @@ def _compare_with_baseline(results: list[LeadResult], inputs: list) -> dict[str,
             apollo_people = 0
         apollo_ok = apollo_verdict in {"completed", "complete", "done"}
         lf_ok = result.lead_grade in {"A", "B", "C", "D"}
-        lf_people = len(_is_decision_maker(result))
+        lf_people = len(result.people)
+        lf_dms = len(_is_decision_maker(result))
 
-        counts["apollo_resolved"] += int(apollo_ok)
+        counts["apollo_completed"] += int(apollo_ok)
+        counts["apollo_with_people"] += int(apollo_people > 0)
         counts["apollo_people"] += apollo_people
-        counts["leadfinder_resolved"] += int(lf_ok)
+        counts["leadfinder_leads"] += int(lf_ok)
+        counts["leadfinder_with_people"] += int(lf_people > 0)
         counts["leadfinder_people"] += lf_people
+        counts["leadfinder_decision_makers"] += lf_dms
         if apollo_ok and lf_ok:
             counts["both"] += 1
         elif lf_ok:

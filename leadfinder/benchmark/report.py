@@ -191,26 +191,37 @@ def write_summary(
         lines.append("## Comparison with the recorded baseline")
         lines.append("")
         comparison = metrics.comparison
-        lines.append(f"Baseline rows compared: {comparison.get('total', 0)}")
+        total = comparison.get("total", 0)
+        lines.append(f"Baseline rows compared: {total}")
         lines.append("")
-        lines.append("| Metric | Baseline | This run |")
+        lines.append("| Metric | Apollo baseline | This run |")
         lines.append("| --- | ---: | ---: |")
         lines.append(
-            f"| Companies resolved | {comparison.get('apollo_resolved', 0)} "
-            f"({_pct_of(comparison.get('apollo_resolved', 0), comparison.get('total', 0))}%) "
-            f"| {comparison.get('leadfinder_resolved', 0)} "
-            f"({_pct_of(comparison.get('leadfinder_resolved', 0), comparison.get('total', 0))}%) |"
+            f"| Companies with a lead (Apollo completed / this run A-D) "
+            f"| {comparison.get('apollo_completed', 0)} "
+            f"({_pct_of(comparison.get('apollo_completed', 0), total)}%) "
+            f"| {comparison.get('leadfinder_leads', 0)} "
+            f"({_pct_of(comparison.get('leadfinder_leads', 0), total)}%) |"
         )
         lines.append(
-            f"| Decision makers found | {comparison.get('apollo_people', 0)} "
+            f"| Companies with >=1 person "
+            f"| {comparison.get('apollo_with_people', 0)} "
+            f"({_pct_of(comparison.get('apollo_with_people', 0), total)}%) "
+            f"| {comparison.get('leadfinder_with_people', 0)} "
+            f"({_pct_of(comparison.get('leadfinder_with_people', 0), total)}%) |"
+        )
+        lines.append(
+            f"| People found (total) | {comparison.get('apollo_people', 0)} "
             f"| {comparison.get('leadfinder_people', 0)} |"
         )
         lines.append(
-            f"| Resolved by both | {comparison.get('both', 0)} | - |"
+            f"| Decision makers (this run only) | - "
+            f"| {comparison.get('leadfinder_decision_makers', 0)} |"
         )
+        lines.append(f"| Leads by both | {comparison.get('both', 0)} | - |")
+        lines.append(f"| Leads only by Apollo | {comparison.get('apollo_only', 0)} | - |")
         lines.append(
-            f"| Resolved only by this run | {comparison.get('apollo_only', 0)} | "
-            f"{comparison.get('leadfinder_only', 0)} |"
+            f"| Leads only by this run | - | {comparison.get('leadfinder_only', 0)} |"
         )
         lines.append("")
 

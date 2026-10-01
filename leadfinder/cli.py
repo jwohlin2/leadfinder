@@ -327,7 +327,8 @@ def cmd_report(args: argparse.Namespace) -> int:
 
     import json
 
-    from leadfinder.models.company import CompanyIdentity
+    from leadfinder.models.company import CompanyIdentity, load_company_csv
+    from leadfinder.models.person import Person
     from leadfinder.models.result import BestLead, ContactInfo, ResearchStats
 
     payload = json.loads(source.read_text(encoding="utf-8"))
@@ -336,6 +337,7 @@ def cmd_report(args: argparse.Namespace) -> int:
             input_company=item["input_company"],
             input_domain=item["input_domain"],
             company=CompanyIdentity(**item["company"]),
+            people=[Person(**person) for person in item.get("people", [])],
             best_lead=BestLead(**item["best_lead"]),
             contact=ContactInfo(**item["contact"]),
             lead_grade=item["lead_grade"],
@@ -351,8 +353,15 @@ def cmd_report(args: argparse.Namespace) -> int:
     for result in results:
         print(f"{result.lead_grade:4s} {result.input_company:24s} {result.company.canonical_name}")
 
+    # Reload the benchmark CSV so the Apollo comparison table survives a
+    # report rebuild instead of coming back empty.
+    inputs = None
+    default_input = config.resolve("data/input/companies.csv")
+    if default_input.exists():
+        inputs = load_company_csv(default_input)
+
     output = config.resolve(config.output.directory)
-    metrics = compute_metrics(results)
+    metrics = compute_metrics(results, inputs=inputs)
     summary = write_summary(results, metrics, output / SUMMARY_MD)
     html = None
     if config.output.write_html_report:

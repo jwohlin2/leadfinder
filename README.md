@@ -23,10 +23,12 @@ Frozen 98-company list (`data/input/companies.csv`), same input every run:
 | ≥2 decision makers | 14.3% |
 | Technical failures | 0 |
 
-Measured against the Apollo columns shipped in the CSV (17 companies with a
-recorded person, 69 decision makers): this pipeline resolves 16 companies and
-56 decision makers, and 13 of those are companies Apollo misses. Per-company
-detail is written to `data/output/benchmark_summary.md` and `report.html`.
+Against the Apollo columns shipped in the CSV: Apollo marks 17 companies
+completed and lists people for 24 of them (69 people total). This run found at
+least one person for 27 companies (81 people) and graded 16 as A–D leads
+(person + usable contact path); 13 of those A–D leads are companies Apollo did
+not mark completed. Per-company detail is in `data/output/benchmark_summary.md`
+and `report.html`.
 
 ## How a company is resolved
 
