@@ -1,6 +1,6 @@
 # leadfinder
 
-Zero-cost lead discovery for obscure companies: given a company name and a
+Low-cost lead discovery for obscure companies: given a company name and a
 domain, resolve the real legal entity, find a current decision-maker, and
 produce a contact path (email, form or phone) — with a retrieved source for
 every claim.
@@ -149,21 +149,3 @@ tests/                unit tests (extraction, false positives, people pass)
 docker/               optional SearXNG compose setup
 data/input/           frozen benchmark CSV
 ```
-
-## Tests
-
-```powershell
-pip install -e ".[dev]"
-pytest
-```
-
-## Data handling
-
-The tool reads public web pages and stores retrieved URLs and quotes as
-evidence. `data/output/` contains personal contact data and is gitignored —
-do not commit it. Respect each site's terms and applicable privacy law when
-using the output.
-
-## License
-
-Private repository — all rights reserved.
